@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 _moveInput;
     private Rigidbody _rb;
     private bool _grounded;
+    [SerializeField]
+    private Camera _camera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,6 +28,8 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         _rb.angularVelocity = Vector3.zero;
+
+        transform.forward = new Vector3(_camera.transform.forward.x, transform.forward.y, _camera.transform.forward.z);
 
         Vector3 position = transform.position;
 
