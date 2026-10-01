@@ -8,28 +8,37 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _rotationSpeed;
     [SerializeField]
-    LayerMask _groundMask;
-    [SerializeField]
     private float _groundingOffset;
+    [SerializeField]
+    private Vector3 _groundingCastHalfSize;
     [SerializeField]
     private float _jumpForce;
     [SerializeField]
+    private PhysicsMaterial _zeroFrictionMaterial;
+    [SerializeField]
+    private Collider _playerCollider;
+    [SerializeField]
     private Camera _camera;
 
-    
     private Vector2 _moveInput;
     private Rigidbody _rb;
+
     private bool _grounded;
+    private bool _jumping;
 
     void Start()
     {
         _grounded = true;
+        _jumping = false;
         _rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void FixedUpdate()
     {
+        // check if grounded
+        SetGrounded(Physics.BoxCast(_playerCollider.transform.position, _groundingCastHalfSize, -_playerCollider.transform.up, _playerCollider.transform.rotation, _groundingOffset));
+
         // rotation
         Vector3 cameraForward = new Vector3(_camera.transform.forward.x, 0, _camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(_moveInput.x, 0, _moveInput.y), Vector3.up);
@@ -43,24 +52,54 @@ public class PlayerController : MonoBehaviour
         Vector3 position = transform.position;
         position += transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _moveSpeed * Time.fixedDeltaTime;
 
-        // keep player on ground for slopes
-        if (_grounded)
+        if (_grounded && !_jumping)
         {
             _rb.linearVelocity = Vector3.zero;
 
-            RaycastHit hit;
-            if (Physics.Raycast(position, -transform.up, out hit, _groundingOffset, _groundMask))
-            {
-                position.y = hit.point.y;
-                position.y += _groundingOffset;
-            }
+            // keep player on ground for slopes
+            // RaycastHit hit;
+            // if (Physics.Raycast(position, -transform.up, out hit, _groundingOffset))
+            // {
+            //     position.y = hit.point.y;
+            //     position.y += _groundingOffset;
+            // }
         }
 
         // only updates when needed
         if (_moveInput != Vector2.zero)
         {
-            _rb.Move(position, rotation);
+            _rb.MoveRotation(rotation);
+            _rb.MovePosition(position);
         }
+    }
+
+    private void SetGrounded(bool grounded)
+    {
+        if(_grounded == grounded)
+        {
+            return;
+        }
+
+        _grounded = grounded;
+        // so running into walls has zero friction when in the air
+        _playerCollider.material = grounded ? null: _zeroFrictionMaterial;
+        // if on the ground, the player is not jumping
+        if (grounded)
+        {
+            SetJumping(false);
+        }
+    }
+
+    private void SetJumping(bool jumping)
+    {
+        if(_jumping == jumping)
+        {
+            return;
+        }
+
+        _jumping = jumping;
+        // so running into walls has zero friction when in the air
+        _playerCollider.material = jumping ? _zeroFrictionMaterial : null;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -70,33 +109,25 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && _grounded)
+        if (context.performed && _grounded && !_jumping)
         {
-            _grounded = false;
+            //SetGrounded(false);
             _rb.AddForce(transform.up * _jumpForce);
+            SetJumping(true);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnDrawGizmosSelected()
     {
-        if ((_groundMask & (1 << collision.gameObject.layer)) != 0)
-        {
-            float deltaAngle = Mathf.Abs(Vector3.Angle(Vector3.up, collision.contacts[0].normal));
-            if (deltaAngle < 90)
-            {
-                _grounded = true;
-            }
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if ((_groundMask & (1 << collision.gameObject.layer)) != 0)
-        {
-            if (!Physics.Raycast(transform.position, -transform.up, out RaycastHit _, _groundingOffset, _groundMask))
-            {
-                _grounded = false;
-            }
-        }
+        //_playerCollider.transform.position, Vector3.zero,-_playerCollider.transform.up, _playerCollider.transform.rotation, _groundingOffset
+        Gizmos.color = Color.red;
+        Gizmos.matrix = 
+        Matrix4x4.Translate(_playerCollider.transform.position) * 
+        Matrix4x4.Rotate(_playerCollider.transform.rotation) * 
+        Matrix4x4.Translate(-_playerCollider.transform.position);
+        Gizmos.DrawWireCube(
+            _playerCollider.transform.position + -_playerCollider.transform.up * _groundingOffset,
+            _groundingCastHalfSize * 2
+        );
     }
 }
