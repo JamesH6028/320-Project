@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -19,9 +20,17 @@ public class PlayerController : MonoBehaviour
     private Collider _playerCollider;
     [SerializeField]
     private Camera _camera;
+    [SerializeField]
+    private Transform _lookPoint;
 
     private Vector2 _moveInput;
     private Rigidbody _rb;
+
+    private Vector2 _lookMin = new Vector2(.25f, -.25f);
+    private Vector2 _lookMax = new Vector2(2.25f, -2.25f);
+    private Vector2 _lookStep;
+    private float _zoomCount = 50.0f;
+    private float _zoomMax = 50.0f;
 
     private bool _grounded;
     private bool _jumping;
@@ -32,6 +41,8 @@ public class PlayerController : MonoBehaviour
         _jumping = false;
         _rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
+        _lookStep = new Vector2((_lookMax.x - _lookMin.x) / _zoomMax * -1.0f, (_lookMax.y - _lookMin.y) / _zoomMax * -1.0f);
+        Zoom();
     }
 
     private void FixedUpdate()
@@ -115,6 +126,31 @@ public class PlayerController : MonoBehaviour
             _rb.AddForce(transform.up * _jumpForce);
             SetJumping(true);
         }
+    }
+
+    public void OnZoom(InputAction.CallbackContext context)
+    {
+        float zoom = context.ReadValue<Vector2>().y;
+        if (zoom == 0.0f) return;
+        _zoomCount += zoom;
+        if (_zoomCount > _zoomMax)
+        {
+            _zoomCount = _zoomMax;
+            return;
+        }
+        else if (_zoomCount < 0.0f)
+        {
+            _zoomCount = 0.0f;
+            return;
+        }
+        Zoom();
+    }
+
+    private void Zoom()
+    {
+        float lookY = (_lookStep.x * _zoomCount) + _lookMax.x;
+        float lookZ = (_lookStep.y * _zoomCount) + _lookMax.y;
+        _lookPoint.SetLocalPositionAndRotation(new Vector3(0.0f, lookY, lookZ), Quaternion.identity);
     }
 
     void OnDrawGizmosSelected()
