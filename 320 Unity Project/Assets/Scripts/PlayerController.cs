@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -322,6 +323,17 @@ public class PlayerController : MonoBehaviour
         float lookY = (_lookStep.x * _zoomCount) + _lookMax.x;
         float lookZ = (_lookStep.y * _zoomCount) + _lookMax.y;
         _lookPoint.SetLocalPositionAndRotation(new Vector3(0.0f, lookY, lookZ), Quaternion.identity);
+    }
+    
+    public void Pause(InputAction.CallbackContext context)
+    {
+        if (context.performed) ResetLevel();
+    }
+
+    private void ResetLevel()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
     }
 
     void OnDrawGizmosSelected()

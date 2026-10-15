@@ -31,8 +31,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174596776957731486}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.046066135, y: 0.6666265, z: 0.041341115, w: -0.7428176}
-  m_LocalPosition: {x: 4.7127542, y: 0.079777, z: -1.0110128}
+  m_LocalRotation: {x: 0.05170247, y: 0.63971746, z: -0.043198455, w: 0.76565164}
+  m_LocalPosition: {x: -4.910061, y: 1.34695, z: -1.3870981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115,7 +115,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: -123.84396
+    Value: 39.7264
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -125,7 +125,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: -18.544714
+    Value: -3.704462
     Center: 17.5
     Range: {x: -45, y: 45}
     Wrap: 0
@@ -302,24 +302,24 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174596776957731486}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
   CameraRadius: 0.1
   Decollision:
-    Enabled: 0
+    Enabled: 1
     ObstacleLayers:
       serializedVersion: 2
       m_Bits: 1
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Damping: 0.5
+    Damping: 1.5
     SmoothingTime: 0
   TerrainResolution:
-    Enabled: 1
+    Enabled: 0
     TerrainLayers:
       serializedVersion: 2
       m_Bits: 1
@@ -353,8 +353,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4273301406675781634}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.03270245, y: 0.66726214, z: 0.02934815, w: -0.7435257}
-  m_LocalPosition: {x: 4.7127542, y: 0.079777, z: -1.0110128}
+  m_LocalRotation: {x: 0.054452308, y: 0.63955814, z: -0.045496, w: 0.765461}
+  m_LocalPosition: {x: -4.910061, y: 1.34695, z: -1.3870981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -593,11 +593,62 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionId
+      value: 8cbd907c-811e-4f76-a7d7-77ef29acbc41
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionName
+      value: 'Player/Pause[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1217173103963503499}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Pause
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+--- !u!114 &1217173103963503499 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+  m_PrefabInstance: {fileID: 6115839556602247975}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be25c7ec17f43c044982a3a5d77a96ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!4 &2151234404561710082 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
