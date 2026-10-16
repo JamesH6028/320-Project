@@ -545,14 +545,6 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 9081838093117827643}
-    - target: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: _minSnapAngle
-      value: 170
-      objectReference: {fileID: 0}
-    - target: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: _rotationSpeed
-      value: 720
-      objectReference: {fileID: 0}
     - target: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -593,62 +585,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.size
-      value: 21
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_ActionId
-      value: 8cbd907c-811e-4f76-a7d7-77ef29acbc41
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_ActionName
-      value: 'Player/Pause[/Keyboard/escape]'
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1217173103963503499}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Pause
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlayerController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
---- !u!114 &1217173103963503499 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-  m_PrefabInstance: {fileID: 6115839556602247975}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be25c7ec17f43c044982a3a5d77a96ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!4 &2151234404561710082 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
