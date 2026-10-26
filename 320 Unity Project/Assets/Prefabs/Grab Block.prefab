@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7143829125066754541}
+  - component: {fileID: 7348261110644211737}
   - component: {fileID: 2909906355982588383}
   - component: {fileID: 2987196962271505901}
   - component: {fileID: 5370571789025903289}
@@ -35,6 +36,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7348261110644211737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5554723181078353303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfdc55420886c944ad520534e2e5838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrabObject
+  _hasKillPlane: 0
+  _killPlane:
+    _killPlaneHeight: -100
+    _killRadiusFromPlayer: 5
+    _respawnPosition: {x: 0, y: 0, z: 0}
+    _respawnRotation: {x: 0, y: 0, z: 0, w: 0}
+    _objectMeshes: []
 --- !u!33 &2909906355982588383
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -121,7 +141,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5554723181078353303}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -139,4 +159,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1

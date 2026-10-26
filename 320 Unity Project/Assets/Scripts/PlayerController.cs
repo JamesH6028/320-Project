@@ -55,6 +55,8 @@ public class PlayerController : MonoBehaviour
     private bool _grounded;
     private bool _canJump;
 
+    public Collider PlayerCollider => _playerCollider;
+
     void Start()
     {
         _grounded = true;
@@ -66,20 +68,28 @@ public class PlayerController : MonoBehaviour
         Zoom();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         // check if grounded
         SetGrounded(GroundedRayCasts());
         // check if can jump
         SetCanJump(CanJumpRayCasts());
 
-        if (_hj != null)
+        if (_moveInput == Vector2.zero)
         {
-            BiteMovementUpdate();
+            _rb.linearVelocity = Vector3.Scale(_rb.linearVelocity, Vector3.up);
+            _rb.angularVelocity = Vector3.zero;
         }
         else
         {
-            ForwardsMovementUpdate();
+            if (_hj != null)
+            {
+                BiteMovementUpdate();
+            }
+            else
+            {
+                ForwardsMovementUpdate();
+            }
         }
         _prevMoveInput = _moveInput;
     }
@@ -324,7 +334,7 @@ public class PlayerController : MonoBehaviour
         float lookZ = (_lookStep.y * _zoomCount) + _lookMax.y;
         _lookPoint.SetLocalPositionAndRotation(new Vector3(0.0f, lookY, lookZ), Quaternion.identity);
     }
-    
+
     public void Pause(InputAction.CallbackContext context)
     {
         if (context.performed) ResetLevel();
