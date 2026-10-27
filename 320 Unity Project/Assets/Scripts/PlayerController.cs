@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -5,57 +7,72 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float _moveSpeed;
-    [SerializeField]
-    private float _rotationSpeed;
-    [SerializeField]
-    private float _backwardsMoveSpeed;
-    [SerializeField]
-    private float _backwardsRotationSpeed;
-    [SerializeField]
-    private float _minSnapAngle;
-
-    [SerializeField]
-    private Vector3 _groundingCheckDistance;
-    [SerializeField]
-    private Vector3 _canJumpCheckDistance;
-    [SerializeField]
-    private float _jumpForce;
-    [SerializeField]
-    private PhysicsMaterial _zeroFrictionMaterial;
-
-    [SerializeField]
     private Collider _playerCollider;
 
-    [SerializeField]
-    private float _biteRayHeight;
-    [SerializeField]
-    private float _biteRayLength;
-    [SerializeField]
-    private LayerMask _raycastInteractableLayer;
-    [SerializeField]
-    private Vector3 _hingeAnchor;
+    private Rigidbody _rb;
 
-    [SerializeField]
-    private Camera _camera;
-    [SerializeField]
-    private Transform _lookPoint;
+    public Collider PlayerCollider => _playerCollider;
+
+    #region Movement
+    [Serializable]
+    private class Movement
+    {
+        public float _moveSpeed;
+        public float _rotationSpeed;
+        public float _backwardsMoveSpeed;
+        public float _backwardsRotationSpeed;
+        public float _minSnapAngle;
+    }
+    [SerializeField] private Movement _movement;
 
     private Vector2 _moveInput;
     private Vector2 _prevMoveInput;
-    private Rigidbody _rb;
+    #endregion
+
+    #region Jumping
+    [Serializable]
+    private class Jumping
+    {
+        public Vector3 _groundingCheckDistance;
+        public Vector3 _canJumpCheckDistance;
+        public float _jumpForce;
+        public PhysicsMaterial _zeroFrictionMaterial;
+    }
+    [SerializeField] private Jumping _jumping;
+
+    private bool _grounded;
+    private bool _canJump;
+    #endregion
+
+    #region Biting
+    [Serializable]
+    private class Biting
+    {
+        public float _biteRayHeight;
+        public float _biteRayLength;
+        public LayerMask _raycastInteractableLayer;
+        public Vector3 _hingeAnchor;
+    }
+    [SerializeField] private Biting _biting;
+
     private HingeJoint _hj;
+    #endregion
+
+    #region Camera
+    [Serializable]
+    private class CameraControls
+    {
+        public Camera _camera;
+        public Transform _lookPoint;
+    }
+    [SerializeField] private CameraControls _camera;
 
     private Vector2 _lookMin = new Vector2(.25f, -.25f);
     private Vector2 _lookMax = new Vector2(2.25f, -2.25f);
     private Vector2 _lookStep;
     private float _zoomCount = 50.0f;
     private float _zoomMax = 50.0f;
-
-    private bool _grounded;
-    private bool _canJump;
-
-    public Collider PlayerCollider => _playerCollider;
+    #endregion
 
     void Start()
     {
@@ -68,7 +85,7 @@ public class PlayerController : MonoBehaviour
         Zoom();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         // check if grounded
         SetGrounded(GroundedRayCasts());
@@ -97,14 +114,14 @@ public class PlayerController : MonoBehaviour
     private void ForwardsMovementUpdate(bool rotSnapping = true)
     {
         // rotation
-        Vector3 cameraForward = new Vector3(_camera.transform.forward.x, 0, _camera.transform.forward.z).normalized;
+        Vector3 cameraForward = new Vector3(_camera._camera.transform.forward.x, 0, _camera._camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(_moveInput.x, 0, _moveInput.y), Vector3.up);
         desiredRot *= Quaternion.LookRotation(cameraForward, Vector3.up);
         Quaternion rotation;
         if (
             rotSnapping && (
                 _prevMoveInput == Vector2.zero ||
-                Quaternion.Angle(transform.rotation, desiredRot) >= _minSnapAngle
+                Quaternion.Angle(transform.rotation, desiredRot) >= _movement._minSnapAngle
         ))
         {
             rotation = Quaternion.RotateTowards(
@@ -117,12 +134,12 @@ public class PlayerController : MonoBehaviour
             rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 desiredRot,
-                _rotationSpeed * Time.fixedDeltaTime);
+                _movement._rotationSpeed * Time.fixedDeltaTime);
         }
 
         // position
         Vector3 position = transform.position;
-        position += transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _moveSpeed * Time.fixedDeltaTime;
+        position += transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._moveSpeed * Time.fixedDeltaTime;
         if (_moveInput != Vector2.zero)
         {
             _rb.MoveRotation(rotation);
@@ -133,14 +150,14 @@ public class PlayerController : MonoBehaviour
     private void BackwardsMovementUpdate(bool rotSnapping = true)
     {
         // rotation
-        Vector3 cameraForward = new Vector3(_camera.transform.forward.x, 0, _camera.transform.forward.z).normalized;
+        Vector3 cameraForward = new Vector3(_camera._camera.transform.forward.x, 0, _camera._camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(-_moveInput.x, 0, -_moveInput.y), Vector3.up);
         desiredRot *= Quaternion.LookRotation(cameraForward, Vector3.up);
         Quaternion rotation;
         if (
             rotSnapping && (
                 _prevMoveInput == Vector2.zero ||
-                Quaternion.Angle(transform.rotation, desiredRot) >= _minSnapAngle
+                Quaternion.Angle(transform.rotation, desiredRot) >= _movement._minSnapAngle
         ))
         {
             rotation = Quaternion.RotateTowards(
@@ -153,12 +170,12 @@ public class PlayerController : MonoBehaviour
             rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 desiredRot,
-                _backwardsRotationSpeed * Time.fixedDeltaTime);
+                _movement._backwardsRotationSpeed * Time.fixedDeltaTime);
         }
 
         // position
         Vector3 position = transform.position;
-        position += -transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _backwardsMoveSpeed * Time.fixedDeltaTime;
+        position += -transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._backwardsMoveSpeed * Time.fixedDeltaTime;
         if (_moveInput != Vector2.zero)
         {
             _rb.MoveRotation(rotation);
@@ -168,7 +185,7 @@ public class PlayerController : MonoBehaviour
 
     private void BiteMovementUpdate()
     {
-        Vector3 cameraForward = new Vector3(_camera.transform.forward.x, 0, _camera.transform.forward.z).normalized;
+        Vector3 cameraForward = new Vector3(_camera._camera.transform.forward.x, 0, _camera._camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(_moveInput.x, 0, _moveInput.y), Vector3.up);
         desiredRot *= Quaternion.LookRotation(cameraForward, Vector3.up);
 
@@ -185,42 +202,42 @@ public class PlayerController : MonoBehaviour
     private bool GroundedRayCasts()
     {
         return Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.forward * _groundingCheckDistance.z,
+                _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._groundingCheckDistance.z,
                 -_playerCollider.transform.up,
-                _groundingCheckDistance.y) ||
+                _jumping._groundingCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.forward * -_groundingCheckDistance.z,
+                _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._groundingCheckDistance.z,
                 -_playerCollider.transform.up,
-                _groundingCheckDistance.y) ||
+                _jumping._groundingCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.right * _groundingCheckDistance.x,
+                _playerCollider.transform.position + _playerCollider.transform.right * _jumping._groundingCheckDistance.x,
                 -_playerCollider.transform.up,
-                _groundingCheckDistance.y) ||
+                _jumping._groundingCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.right * -_groundingCheckDistance.x,
+                _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._groundingCheckDistance.x,
                 -_playerCollider.transform.up,
-                _groundingCheckDistance.y
+                _jumping._groundingCheckDistance.y
         );
     }
 
     private bool CanJumpRayCasts()
     {
         return Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.forward * _canJumpCheckDistance.z,
+                _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._canJumpCheckDistance.z,
                 -_playerCollider.transform.up,
-                _canJumpCheckDistance.y) ||
+                _jumping._canJumpCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.forward * -_canJumpCheckDistance.z,
+                _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._canJumpCheckDistance.z,
                 -_playerCollider.transform.up,
-                _canJumpCheckDistance.y) ||
+                _jumping._canJumpCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.right * _canJumpCheckDistance.x,
+                _playerCollider.transform.position + _playerCollider.transform.right * _jumping._canJumpCheckDistance.x,
                 -_playerCollider.transform.up,
-                _canJumpCheckDistance.y) ||
+                _jumping._canJumpCheckDistance.y) ||
             Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.right * -_canJumpCheckDistance.x,
+                _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._canJumpCheckDistance.x,
                 -_playerCollider.transform.up,
-                _canJumpCheckDistance.y);
+                _jumping._canJumpCheckDistance.y);
     }
 
     private void SetGrounded(bool grounded)
@@ -232,7 +249,7 @@ public class PlayerController : MonoBehaviour
 
         _grounded = grounded;
         // so running into walls has zero friction when in the air
-        _playerCollider.material = grounded ? null : _zeroFrictionMaterial;
+        _playerCollider.material = grounded ? null : _jumping._zeroFrictionMaterial;
     }
 
     private void SetCanJump(bool canJump)
@@ -261,7 +278,7 @@ public class PlayerController : MonoBehaviour
         if (context.performed && _canJump)
         {
             _rb.linearVelocity = new Vector3(_rb.angularVelocity.x, 0, _rb.angularVelocity.x);
-            _rb.AddForce(transform.up * _jumpForce);
+            _rb.AddForce(transform.up * _jumping._jumpForce);
             SetCanJump(false);
         }
     }
@@ -272,16 +289,16 @@ public class PlayerController : MonoBehaviour
         {
             RaycastHit rayInfo;
             if (Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.up * _biteRayHeight,
+                _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
                 _playerCollider.transform.forward,
                 out rayInfo,
-                _biteRayLength,
-                _raycastInteractableLayer
+                _biting._biteRayLength,
+                _biting._raycastInteractableLayer
             ))
             {
                 Rigidbody rbOther = rayInfo.collider.gameObject.GetComponent<Rigidbody>();
                 _hj = gameObject.AddComponent<HingeJoint>();
-                _hj.anchor = _hingeAnchor;
+                _hj.anchor = _biting._hingeAnchor;
                 _hj.axis = transform.up;
                 _hj.connectedBody = rbOther;
                 _hj.enableCollision = true;
@@ -332,7 +349,7 @@ public class PlayerController : MonoBehaviour
     {
         float lookY = (_lookStep.x * _zoomCount) + _lookMax.x;
         float lookZ = (_lookStep.y * _zoomCount) + _lookMax.y;
-        _lookPoint.SetLocalPositionAndRotation(new Vector3(0.0f, lookY, lookZ), Quaternion.identity);
+        _camera._lookPoint.SetLocalPositionAndRotation(new Vector3(0.0f, lookY, lookZ), Quaternion.identity);
     }
 
     public void Pause(InputAction.CallbackContext context)
@@ -351,51 +368,51 @@ public class PlayerController : MonoBehaviour
         // can jump
         Gizmos.color = Color.green;
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.forward * _canJumpCheckDistance.z,
-            _playerCollider.transform.position + _playerCollider.transform.forward * _canJumpCheckDistance.z + -_playerCollider.transform.up * _canJumpCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._canJumpCheckDistance.z,
+            _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._canJumpCheckDistance.z + -_playerCollider.transform.up * _jumping._canJumpCheckDistance.y
             );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.forward * -_canJumpCheckDistance.z,
-            _playerCollider.transform.position + _playerCollider.transform.forward * -_canJumpCheckDistance.z + -_playerCollider.transform.up * _canJumpCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._canJumpCheckDistance.z,
+            _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._canJumpCheckDistance.z + -_playerCollider.transform.up * _jumping._canJumpCheckDistance.y
         );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.right * _canJumpCheckDistance.x,
-            _playerCollider.transform.position + _playerCollider.transform.right * _canJumpCheckDistance.x + -_playerCollider.transform.up * _canJumpCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.right * _jumping._canJumpCheckDistance.x,
+            _playerCollider.transform.position + _playerCollider.transform.right * _jumping._canJumpCheckDistance.x + -_playerCollider.transform.up * _jumping._canJumpCheckDistance.y
         );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.right * -_canJumpCheckDistance.x,
-            _playerCollider.transform.position + _playerCollider.transform.right * -_canJumpCheckDistance.x + -_playerCollider.transform.up * _canJumpCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._canJumpCheckDistance.x,
+            _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._canJumpCheckDistance.x + -_playerCollider.transform.up * _jumping._canJumpCheckDistance.y
         );
 
         // grounded
         Gizmos.color = Color.red;
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.forward * _groundingCheckDistance.z,
-            _playerCollider.transform.position + _playerCollider.transform.forward * _groundingCheckDistance.z + -_playerCollider.transform.up * _groundingCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._groundingCheckDistance.z,
+            _playerCollider.transform.position + _playerCollider.transform.forward * _jumping._groundingCheckDistance.z + -_playerCollider.transform.up * _jumping._groundingCheckDistance.y
             );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.forward * -_groundingCheckDistance.z,
-            _playerCollider.transform.position + _playerCollider.transform.forward * -_groundingCheckDistance.z + -_playerCollider.transform.up * _groundingCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._groundingCheckDistance.z,
+            _playerCollider.transform.position + _playerCollider.transform.forward * -_jumping._groundingCheckDistance.z + -_playerCollider.transform.up * _jumping._groundingCheckDistance.y
         );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.right * _groundingCheckDistance.x,
-            _playerCollider.transform.position + _playerCollider.transform.right * _groundingCheckDistance.x + -_playerCollider.transform.up * _groundingCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.right * _jumping._groundingCheckDistance.x,
+            _playerCollider.transform.position + _playerCollider.transform.right * _jumping._groundingCheckDistance.x + -_playerCollider.transform.up * _jumping._groundingCheckDistance.y
         );
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.right * -_groundingCheckDistance.x,
-            _playerCollider.transform.position + _playerCollider.transform.right * -_groundingCheckDistance.x + -_playerCollider.transform.up * _groundingCheckDistance.y
+            _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._groundingCheckDistance.x,
+            _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._groundingCheckDistance.x + -_playerCollider.transform.up * _jumping._groundingCheckDistance.y
         );
 
         // bite
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.up * _biteRayHeight,
-            _playerCollider.transform.position + _playerCollider.transform.up * _biteRayHeight + _playerCollider.transform.forward * _biteRayLength
+            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
+            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight + _playerCollider.transform.forward * _biting._biteRayLength
             );
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(
-            transform.TransformPoint(_hingeAnchor),
-            transform.TransformPoint(_hingeAnchor) + transform.up * 0.25f
+            transform.TransformPoint(_biting._hingeAnchor),
+            transform.TransformPoint(_biting._hingeAnchor) + transform.up * 0.25f
             );
     }
 }

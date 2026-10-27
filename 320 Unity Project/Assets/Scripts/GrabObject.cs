@@ -31,7 +31,7 @@ public class GrabObject : MonoBehaviour
 
     void Update()
     {
-        if(
+        if (
             _hasKillPlane &&
             transform.position.y < _killPlane._killPlaneHeight &&
             Vector3.Distance(_playerController.PlayerCollider.transform.position, transform.position) > _killPlane._killRadiusFromPlayer)

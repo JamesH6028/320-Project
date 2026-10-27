@@ -31,8 +31,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174596776957731486}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.05170247, y: 0.63971746, z: -0.043198455, w: 0.76565164}
-  m_LocalPosition: {x: -4.910061, y: 1.34695, z: -1.3870981}
+  m_LocalRotation: {x: 0.056851715, y: 0.53540134, z: -0.036154237, w: 0.8419063}
+  m_LocalPosition: {x: -4.518671, y: 1.3469496, z: -2.615953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -353,8 +353,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4273301406675781634}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.054452308, y: 0.63955814, z: -0.045496, w: 0.765461}
-  m_LocalPosition: {x: -4.910061, y: 1.34695, z: -1.3870981}
+  m_LocalRotation: {x: 0.059875432, y: 0.53526807, z: -0.038077146, w: 0.8416966}
+  m_LocalPosition: {x: -4.518671, y: 1.3469496, z: -2.615953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -542,7 +542,7 @@ PrefabInstance:
       value: PlayerController
       objectReference: {fileID: 0}
     - target: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: _camera
+      propertyPath: _camera._camera
       value: 
       objectReference: {fileID: 9081838093117827643}
     - target: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
@@ -583,14 +583,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5393391444619604213, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_TagString
-      value: Player Component
-      objectReference: {fileID: 0}
-    - target: {fileID: 6562120775012454953, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
-      propertyPath: m_ActionEvents.Array.data[19].m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

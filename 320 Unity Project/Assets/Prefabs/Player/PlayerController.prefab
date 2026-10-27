@@ -1226,24 +1226,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be25c7ec17f43c044982a3a5d77a96ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _moveSpeed: 5
-  _rotationSpeed: 720
-  _backwardsMoveSpeed: 3
-  _backwardsRotationSpeed: 540
-  _minSnapAngle: 170
-  _groundingCheckDistance: {x: 0.18, y: 0.25, z: 0.45}
-  _canJumpCheckDistance: {x: 0.18, y: 0.5, z: 0.45}
-  _jumpForce: 300
-  _zeroFrictionMaterial: {fileID: 13400000, guid: 134f967469b187c4abcb0f8bbb37f0a6, type: 2}
   _playerCollider: {fileID: 6974692799977595871}
-  _biteRayHeight: -0.1
-  _biteRayLength: 0.7
-  _raycastInteractableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  _hingeAnchor: {x: 0, y: -0.1, z: 0.58}
-  _camera: {fileID: 0}
-  _lookPoint: {fileID: 7050190990694853149}
+  _movement:
+    _moveSpeed: 5
+    _rotationSpeed: 720
+    _backwardsMoveSpeed: 3
+    _backwardsRotationSpeed: 540
+    _minSnapAngle: 170
+  _jumping:
+    _groundingCheckDistance: {x: 0.18, y: 0.25, z: 0.45}
+    _canJumpCheckDistance: {x: 0.18, y: 0.5, z: 0.45}
+    _jumpForce: 300
+    _zeroFrictionMaterial: {fileID: 13400000, guid: 134f967469b187c4abcb0f8bbb37f0a6, type: 2}
+  _biting:
+    _biteRayHeight: -0.1
+    _biteRayLength: 0.7
+    _raycastInteractableLayer:
+      serializedVersion: 2
+      m_Bits: 64
+    _hingeAnchor: {x: 0, y: -0.1, z: 0.58}
+  _camera:
+    _camera: {fileID: 0}
+    _lookPoint: {fileID: 7050190990694853149}
 --- !u!114 &6562120775012454953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1382,19 +1386,7 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4916690343340556460}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnZoom
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: 60e44952-060c-490d-9d0c-ca5bbad3f94e
     m_ActionName: 'Player/Zoom[/Mouse/scroll]'
   - m_PersistentCalls:
@@ -7613,7 +7605,7 @@ GameObject:
   - component: {fileID: 4725116435924183631}
   m_Layer: 0
   m_Name: Rat Character Model
-  m_TagString: Untagged
+  m_TagString: Player Component
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
