@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,6 +18,7 @@ public class PlayerController : MonoBehaviour
     {
         public float _moveSpeed;
         public float _rotationSpeed;
+        public float _biteRotationSpeed;
         public float _backwardsMoveSpeed;
         public float _backwardsRotationSpeed;
         public float _minSnapAngle;
@@ -94,8 +94,7 @@ public class PlayerController : MonoBehaviour
 
         if (_moveInput == Vector2.zero)
         {
-            _rb.linearVelocity = Vector3.Scale(_rb.linearVelocity, Vector3.up);
-            _rb.angularVelocity = Vector3.zero;
+            ResetVelocity(_rb);
         }
         else
         {
@@ -109,10 +108,16 @@ public class PlayerController : MonoBehaviour
             }
         }
         _prevMoveInput = _moveInput;
+
     }
 
-    private void ForwardsMovementUpdate(bool rotSnapping = true)
+    private void ForwardsMovementUpdate(bool rotSnapping = true, float rotationSpeed = default)
     {
+        if(rotationSpeed == default)
+        {
+            rotationSpeed = _movement._rotationSpeed;
+        }
+
         // rotation
         Vector3 cameraForward = new Vector3(_camera._camera.transform.forward.x, 0, _camera._camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(_moveInput.x, 0, _moveInput.y), Vector3.up);
@@ -134,7 +139,7 @@ public class PlayerController : MonoBehaviour
             rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 desiredRot,
-                _movement._rotationSpeed * Time.fixedDeltaTime);
+                rotationSpeed * Time.fixedDeltaTime);
         }
 
         // position
@@ -147,8 +152,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void BackwardsMovementUpdate(bool rotSnapping = true)
+    private void BackwardsMovementUpdate(bool rotSnapping = true, float rotationSpeed = default)
     {
+        if(rotationSpeed == default)
+        {
+            rotationSpeed = _movement._backwardsRotationSpeed;
+        }
+
         // rotation
         Vector3 cameraForward = new Vector3(_camera._camera.transform.forward.x, 0, _camera._camera.transform.forward.z).normalized;
         Quaternion desiredRot = Quaternion.LookRotation(new Vector3(-_moveInput.x, 0, -_moveInput.y), Vector3.up);
@@ -170,7 +180,7 @@ public class PlayerController : MonoBehaviour
             rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 desiredRot,
-                _movement._backwardsRotationSpeed * Time.fixedDeltaTime);
+                rotationSpeed * Time.fixedDeltaTime);
         }
 
         // position
@@ -191,11 +201,11 @@ public class PlayerController : MonoBehaviour
 
         if (Quaternion.Angle(transform.rotation, desiredRot) > 95)
         {
-            BackwardsMovementUpdate(false);
+            BackwardsMovementUpdate(false, _movement._biteRotationSpeed);
         }
         else if (Quaternion.Angle(transform.rotation, desiredRot) < 85)
         {
-            ForwardsMovementUpdate(false);
+            ForwardsMovementUpdate(false, _movement._biteRotationSpeed);
         }
     }
 
@@ -306,11 +316,18 @@ public class PlayerController : MonoBehaviour
         }
         else if (context.canceled)
         {
-            if (_hj != null)
-            {
-                Destroy(_hj);
-                _hj = null;
-            }
+            DestroyHingeJoint();
+        }
+    }
+
+    private void DestroyHingeJoint()
+    {
+        if (_hj != null)
+        {
+            ResetVelocity(_hj.connectedBody);
+            ResetVelocity(_rb);
+            Destroy(_hj);
+            _hj = null;
         }
     }
 
@@ -325,6 +342,12 @@ public class PlayerController : MonoBehaviour
             field.SetValue(copy, field.GetValue(original));
         }
         return copy as T;
+    }
+
+    private void ResetVelocity(Rigidbody rigidbody, bool resetLinearY = false)
+    {
+        rigidbody.linearVelocity = Vector3.Scale(rigidbody.linearVelocity, resetLinearY ? Vector3.zero : Vector3.up);
+        rigidbody.angularVelocity = Vector3.zero;
     }
 
     public void OnZoom(InputAction.CallbackContext context)

@@ -1228,15 +1228,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   _playerCollider: {fileID: 6974692799977595871}
   _movement:
-    _moveSpeed: 5
+    _moveSpeed: 8
     _rotationSpeed: 720
-    _backwardsMoveSpeed: 3
+    _biteRotationSpeed: 120
+    _backwardsMoveSpeed: 4
     _backwardsRotationSpeed: 540
     _minSnapAngle: 170
   _jumping:
     _groundingCheckDistance: {x: 0.18, y: 0.25, z: 0.45}
     _canJumpCheckDistance: {x: 0.18, y: 0.5, z: 0.45}
-    _jumpForce: 300
+    _jumpForce: 280
     _zeroFrictionMaterial: {fileID: 13400000, guid: 134f967469b187c4abcb0f8bbb37f0a6, type: 2}
   _biting:
     _biteRayHeight: -0.1
