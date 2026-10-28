@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private Collider _playerCollider;
 
     private Rigidbody _rb;
+    private GameManager gameManager;
 
     public Collider PlayerCollider => _playerCollider;
 
@@ -83,6 +84,8 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         _lookStep = new Vector2((_lookMax.x - _lookMin.x) / _zoomMax * -1.0f, (_lookMax.y - _lookMin.y) / _zoomMax * -1.0f);
         Zoom();
+        gameManager = GameManager.Instance;
+        gameManager.SetPlayerController(this);
     }
 
     private void FixedUpdate()
@@ -377,13 +380,19 @@ public class PlayerController : MonoBehaviour
 
     public void Pause(InputAction.CallbackContext context)
     {
-        if (context.performed) ResetLevel();
+        if (context.performed)
+        {
+            if (!gameManager.paused)
+            {
+                gameManager.PauseGame();
+            }
+            else gameManager.ResumeGame();
+        }
     }
 
-    private void ResetLevel()
+    public void PauseMovement()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(currentSceneName);
+        _moveInput = Vector2.zero;
     }
 
     void OnDrawGizmosSelected()

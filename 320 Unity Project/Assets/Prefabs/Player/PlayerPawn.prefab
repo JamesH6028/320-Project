@@ -31,8 +31,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174596776957731486}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.051702663, y: 0.6397142, z: -0.04319825, w: 0.7656544}
-  m_LocalPosition: {x: -4.9100533, y: 1.34695, z: -1.3871394}
+  m_LocalRotation: {x: 0.3289241, y: 0.042977422, z: -0.014986679, w: 0.94325894}
+  m_LocalPosition: {x: -0.39598298, y: 4.1273174, z: -4.8364487}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115,7 +115,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 39.7264
+    Value: -34.8145
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -125,7 +125,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: -3.704462
+    Value: 29.436827
     Center: 17.5
     Range: {x: -45, y: 45}
     Wrap: 0
@@ -284,7 +284,7 @@ MonoBehaviour:
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Strategy: 2
+    Strategy: 0
     MaximumEffort: 4
     SmoothingTime: 0
     Damping: 1
@@ -316,7 +316,7 @@ MonoBehaviour:
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Damping: 1.5
+    Damping: 0.5
     SmoothingTime: 0
   TerrainResolution:
     Enabled: 0
@@ -353,8 +353,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4273301406675781634}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.05445252, y: 0.6395549, z: -0.045495793, w: 0.7654637}
-  m_LocalPosition: {x: -4.9100533, y: 1.34695, z: -1.3871394}
+  m_LocalRotation: {x: 0.30187064, y: 0.043387517, z: -0.013754024, w: 0.9522618}
+  m_LocalPosition: {x: -0.39598298, y: 4.1273174, z: -4.8364487}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
