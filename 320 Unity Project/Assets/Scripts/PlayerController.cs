@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour
         public float _biteRayLength;
         public LayerMask _raycastInteractableLayer;
         public Vector3 _hingeAnchor;
+        public GameObject _biteInfoObject;
     }
     [SerializeField] private Biting _biting;
 
@@ -83,9 +84,18 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         _lookStep = new Vector2((_lookMax.x - _lookMin.x) / _zoomMax * -1.0f, (_lookMax.y - _lookMin.y) / _zoomMax * -1.0f);
+        _biting._biteInfoObject?.SetActive(false);
         Zoom();
         gameManager = GameManager.Instance;
         gameManager.SetPlayerController(this);
+    }
+
+    void Update()
+    {
+        if (_biting._biteInfoObject != null)
+        {
+            _biting._biteInfoObject.SetActive(_hj == null && CanBiteRayCast());
+        }
     }
 
     private void FixedUpdate()
@@ -114,9 +124,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    #region movement updates
     private void ForwardsMovementUpdate(bool rotSnapping = true, float rotationSpeed = default)
     {
-        if(rotationSpeed == default)
+        if (rotationSpeed == default)
         {
             rotationSpeed = _movement._rotationSpeed;
         }
@@ -157,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
     private void BackwardsMovementUpdate(bool rotSnapping = true, float rotationSpeed = default)
     {
-        if(rotationSpeed == default)
+        if (rotationSpeed == default)
         {
             rotationSpeed = _movement._backwardsRotationSpeed;
         }
@@ -211,6 +222,7 @@ public class PlayerController : MonoBehaviour
             ForwardsMovementUpdate(false, _movement._biteRotationSpeed);
         }
     }
+    #endregion
 
     private bool GroundedRayCasts()
     {
@@ -251,6 +263,25 @@ public class PlayerController : MonoBehaviour
                 _playerCollider.transform.position + _playerCollider.transform.right * -_jumping._canJumpCheckDistance.x,
                 -_playerCollider.transform.up,
                 _jumping._canJumpCheckDistance.y);
+    }
+
+    private bool CanBiteRayCast(out RaycastHit rayInfo)
+    {
+        return Physics.Raycast(
+            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
+            _playerCollider.transform.forward,
+            out rayInfo,
+            _biting._biteRayLength,
+            _biting._raycastInteractableLayer);
+    }
+
+    private bool CanBiteRayCast()
+    {
+        return Physics.Raycast(
+            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
+            _playerCollider.transform.forward,
+            _biting._biteRayLength,
+            _biting._raycastInteractableLayer);
     }
 
     private void SetGrounded(bool grounded)
@@ -301,13 +332,7 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             RaycastHit rayInfo;
-            if (Physics.Raycast(
-                _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
-                _playerCollider.transform.forward,
-                out rayInfo,
-                _biting._biteRayLength,
-                _biting._raycastInteractableLayer
-            ))
+            if (CanBiteRayCast(out rayInfo))
             {
                 Rigidbody rbOther = rayInfo.collider.gameObject.GetComponent<Rigidbody>();
                 _hj = gameObject.AddComponent<HingeJoint>();
