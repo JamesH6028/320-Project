@@ -1246,6 +1246,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 64
     _hingeAnchor: {x: 0, y: -0.1, z: 0.58}
+    _biteInfoObject: {fileID: 0}
   _camera:
     _camera: {fileID: 0}
     _lookPoint: {fileID: 7050190990694853149}
