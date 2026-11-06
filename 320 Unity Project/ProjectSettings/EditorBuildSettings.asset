@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Playtest2/movement.unity
     guid: d182fa52b8dbb0e4d85bff8ba73b7baa
+  - enabled: 1
+    path: Assets/Scenes/Kitchen.unity
+    guid: 7dce42974238a0040a1cc3ea2665cff8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
