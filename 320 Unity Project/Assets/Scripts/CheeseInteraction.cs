@@ -3,6 +3,7 @@ using UnityEngine;
 public class CheeseInteraction : MonoBehaviour
 {
     private GameManager gameManager;
+    [SerializeField] private AudioSource audioSource;
 
     private void Start()
     {
@@ -13,6 +14,7 @@ public class CheeseInteraction : MonoBehaviour
     {
         if (other.tag == "Player Component")
         {
+            audioSource.Play();
             gameManager.IncrementCheeseCount();
             Destroy(transform.parent.gameObject);
         }

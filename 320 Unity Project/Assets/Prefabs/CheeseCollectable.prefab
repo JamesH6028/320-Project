@@ -57,12 +57,12 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1927696262276553058}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 8850cc294be26b5438eacf9dde2e1da6, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.939
   m_Pitch: 1
   Loop: 0
@@ -304,3 +304,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1798e54a90e9221479e1f6b23d109ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheeseInteraction
+  audioSource: {fileID: 7099240688867200067}
