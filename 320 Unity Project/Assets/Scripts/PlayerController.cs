@@ -76,6 +76,17 @@ public class PlayerController : MonoBehaviour
     private float _zoomMax = 50.0f;
     #endregion
 
+    #region Audio
+    [Serializable]
+    private class PlayerAudio
+    {
+        public AudioSource _audioSource;
+        public AudioClip _jumpClip;
+        public AudioClip _biteClip;
+    }
+    [SerializeField] private PlayerAudio _audio;
+    #endregion
+
     void Start()
     {
         _grounded = true;
@@ -324,6 +335,8 @@ public class PlayerController : MonoBehaviour
             _rb.linearVelocity = new Vector3(_rb.angularVelocity.x, 0, _rb.angularVelocity.x);
             _rb.AddForce(transform.up * _jumping._jumpForce);
             SetCanJump(false);
+            _audio._audioSource.clip = _audio._jumpClip;
+            _audio._audioSource.Play();
         }
     }
 
@@ -340,6 +353,9 @@ public class PlayerController : MonoBehaviour
                 _hj.axis = transform.up;
                 _hj.connectedBody = rbOther;
                 _hj.enableCollision = true;
+
+                _audio._audioSource.clip = _audio._biteClip;
+                _audio._audioSource.Play();
             }
         }
         else if (context.canceled)

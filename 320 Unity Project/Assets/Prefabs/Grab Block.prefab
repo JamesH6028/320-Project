@@ -48,13 +48,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcfdc55420886c944ad520534e2e5838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrabObject
-  _hasKillPlane: 0
-  _killPlane:
-    _killPlaneHeight: -100
-    _killRadiusFromPlayer: 5
+  _deathPlaneHeight: -100
+  _enableDeathDistance: 1
+  _deathDistanceFromPlayer: 5
+  _onKillAction: 3
+  _respawn:
+    _respawnPositionIsLocal: 1
     _respawnPosition: {x: 0, y: 0, z: 0}
-    _respawnRotation: {x: 0, y: 0, z: 0, w: 0}
-    _objectMeshes: []
+    _respawnRotation: {x: 0, y: 0, z: 0, w: 1}
+    _editorOnly:
+      _objectMeshes: []
 --- !u!33 &2909906355982588383
 MeshFilter:
   m_ObjectHideFlags: 0
