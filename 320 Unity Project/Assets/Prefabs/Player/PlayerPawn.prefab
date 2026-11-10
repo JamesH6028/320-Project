@@ -801,6 +801,14 @@ PrefabInstance:
       propertyPath: _biting._biteInfoObject
       value: 
       objectReference: {fileID: 9183085714868705117}
+    - target: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: _biting._autoBreakWaitTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4916690343340556460, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
+      propertyPath: _jumping._groundingCheckDistance.y
+      value: 0.26
+      objectReference: {fileID: 0}
     - target: {fileID: 5261730381193860901, guid: b9142656b98fe4e4e98e1bad2bfcbf93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

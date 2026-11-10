@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -51,12 +52,13 @@ public class PlayerController : MonoBehaviour
     {
         public float _biteRayHeight;
         public float _biteRayLength;
-        public LayerMask _raycastInteractableLayer;
         public Vector3 _hingeAnchor;
         public GameObject _biteInfoObject;
+        public float _autoBreakWaitTime;
     }
     [SerializeField] private Biting _biting;
 
+    private bool _autoBreakBiteStarted;
     private HingeJoint _hj;
     #endregion
 
@@ -116,6 +118,21 @@ public class PlayerController : MonoBehaviour
         // check if can jump
         SetCanJump(CanJumpRayCasts());
 
+        BiteUpdate();
+        MovementUpdate();
+    }
+
+    private void BiteUpdate()
+    {
+        if (_hj != null && !_grounded)
+        {
+            StartCoroutine(WaitDestroyHingeJoint());
+        }
+    }
+
+    #region movement updates
+    private void MovementUpdate()
+    {
         if (_moveInput == Vector2.zero)
         {
             ResetVelocity(_rb);
@@ -132,10 +149,8 @@ public class PlayerController : MonoBehaviour
             }
         }
         _prevMoveInput = _moveInput;
-
     }
 
-    #region movement updates
     private void ForwardsMovementUpdate(bool rotSnapping = true, float rotationSpeed = default)
     {
         if (rotationSpeed == default)
@@ -282,8 +297,7 @@ public class PlayerController : MonoBehaviour
             _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
             _playerCollider.transform.forward,
             out rayInfo,
-            _biting._biteRayLength,
-            _biting._raycastInteractableLayer);
+            _biting._biteRayLength);
     }
 
     private bool CanBiteRayCast()
@@ -291,8 +305,7 @@ public class PlayerController : MonoBehaviour
         return Physics.Raycast(
             _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
             _playerCollider.transform.forward,
-            _biting._biteRayLength,
-            _biting._raycastInteractableLayer);
+            _biting._biteRayLength);
     }
 
     private void SetGrounded(bool grounded)
@@ -344,6 +357,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
+            DestroyHingeJoint();
             RaycastHit rayInfo;
             if (CanBiteRayCast(out rayInfo))
             {
@@ -351,8 +365,11 @@ public class PlayerController : MonoBehaviour
                 _hj = gameObject.AddComponent<HingeJoint>();
                 _hj.anchor = _biting._hingeAnchor;
                 _hj.axis = transform.up;
-                _hj.connectedBody = rbOther;
-                _hj.enableCollision = true;
+                if (rbOther != null)
+                {
+                    _hj.connectedBody = rbOther;
+                    _hj.enableCollision = true;
+                }
 
                 _audio._audioSource.clip = _audio._biteClip;
                 _audio._audioSource.Play();
@@ -364,28 +381,30 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private IEnumerator WaitDestroyHingeJoint()
+    {
+        if (!_autoBreakBiteStarted)
+        {
+            _autoBreakBiteStarted = true;
+            yield return new WaitForSeconds(_biting._autoBreakWaitTime);
+            DestroyHingeJoint();
+            _autoBreakBiteStarted = false;
+        }
+    }
+
     private void DestroyHingeJoint()
     {
         if (_hj != null)
         {
-            ResetVelocity(_hj.connectedBody);
+            if (_hj.connectedBody != null)
+            {
+                ResetVelocity(_hj.connectedBody);
+            }
             ResetVelocity(_rb);
             Destroy(_hj);
             _hj = null;
-        }
-    }
 
-    // From Shaffe on https://discussions.unity.com/t/copy-a-component-at-runtime/71172
-    private T CopyComponent<T>(T original, GameObject destination) where T : Component
-    {
-        System.Type type = original.GetType();
-        Component copy = destination.AddComponent(type);
-        System.Reflection.FieldInfo[] fields = type.GetFields();
-        foreach (System.Reflection.FieldInfo field in fields)
-        {
-            field.SetValue(copy, field.GetValue(original));
         }
-        return copy as T;
     }
 
     private void ResetVelocity(Rigidbody rigidbody, bool resetLinearY = false)

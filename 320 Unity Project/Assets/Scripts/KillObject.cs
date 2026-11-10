@@ -104,6 +104,10 @@ public class KillObject : MonoBehaviour
             Gizmos.color = Color.cyan;
             foreach (MeshFilter mesh in _respawn._editorOnly._objectMeshes)
             {
+                if (mesh == null)
+                {
+                    continue;
+                }
                 Gizmos.DrawWireMesh(
                     mesh.sharedMesh,
                     _respawn._respawnPositionIsLocal && !Application.isPlaying
