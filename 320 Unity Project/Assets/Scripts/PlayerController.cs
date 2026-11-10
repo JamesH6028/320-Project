@@ -23,12 +23,14 @@ public class PlayerController : MonoBehaviour
         public float _biteRotationSpeed;
         public float _backwardsMoveSpeed;
         public float _backwardsRotationSpeed;
+        public float _sprintMultiplier;
         public float _minSnapAngle;
     }
     [SerializeField] private Movement _movement;
 
-    private Vector2 _moveInput;
-    private Vector2 _prevMoveInput;
+    private Vector2 _moveInput = Vector2.zero;
+    private Vector2 _prevMoveInput = Vector2.zero;
+    private float _moveMultiplier = 1.0f;
     #endregion
 
     #region Jumping
@@ -42,8 +44,8 @@ public class PlayerController : MonoBehaviour
     }
     [SerializeField] private Jumping _jumping;
 
-    private bool _grounded;
-    private bool _canJump;
+    private bool _grounded = true;
+    private bool _canJump = false;
     #endregion
 
     #region Biting
@@ -91,9 +93,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        _grounded = true;
-        _canJump = false;
-        _prevMoveInput = Vector2.zero;
         _rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         _lookStep = new Vector2((_lookMax.x - _lookMin.x) / _zoomMax * -1.0f, (_lookMax.y - _lookMin.y) / _zoomMax * -1.0f);
@@ -182,13 +181,23 @@ public class PlayerController : MonoBehaviour
                 rotationSpeed * Time.fixedDeltaTime);
         }
 
-        // position
-        Vector3 position = transform.position;
-        position += transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._moveSpeed * Time.fixedDeltaTime;
         if (_moveInput != Vector2.zero)
         {
             _rb.MoveRotation(rotation);
-            _rb.MovePosition(position);
+        }
+
+        // position
+        Vector3 deltaPos = transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._moveSpeed * _moveMultiplier * Time.fixedDeltaTime;
+        // TODO: Finish collision testing
+        RaycastHit rayInfo;
+        if(Physics.Raycast(transform.position, deltaPos, out rayInfo, deltaPos.magnitude))
+        {
+            deltaPos = rayInfo.point - transform.position - transform.forward * _biting._hingeAnchor.z;
+        }
+
+        if (_moveInput != Vector2.zero)
+        {
+            _rb.MovePosition(transform.position + deltaPos);
         }
     }
 
@@ -225,7 +234,7 @@ public class PlayerController : MonoBehaviour
 
         // position
         Vector3 position = transform.position;
-        position += -transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._backwardsMoveSpeed * Time.fixedDeltaTime;
+        position += -transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._backwardsMoveSpeed * _moveMultiplier * Time.fixedDeltaTime;
         if (_moveInput != Vector2.zero)
         {
             _rb.MoveRotation(rotation);
@@ -250,6 +259,7 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    #region casts
     private bool GroundedRayCasts()
     {
         return Physics.Raycast(
@@ -307,6 +317,7 @@ public class PlayerController : MonoBehaviour
             _playerCollider.transform.forward,
             _biting._biteRayLength);
     }
+    #endregion
 
     private void SetGrounded(bool grounded)
     {
@@ -316,8 +327,11 @@ public class PlayerController : MonoBehaviour
         }
 
         _grounded = grounded;
-        // so running into walls has zero friction when in the air
-        _playerCollider.material = grounded ? null : _jumping._zeroFrictionMaterial;
+
+        if (grounded)
+        {
+            _playerCollider.material = null;
+        }
     }
 
     private void SetCanJump(bool canJump)
@@ -341,10 +355,25 @@ public class PlayerController : MonoBehaviour
         _moveInput = context.ReadValue<Vector2>();
     }
 
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _moveMultiplier *= _movement._sprintMultiplier;
+            Debug.Log(_moveMultiplier);
+        }
+        else if (context.canceled)
+        {
+            _moveMultiplier /= _movement._sprintMultiplier;
+            Debug.Log(_moveMultiplier);
+        }
+    }
+
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.performed && _canJump)
         {
+            _playerCollider.material = _jumping._zeroFrictionMaterial;
             _rb.linearVelocity = new Vector3(_rb.angularVelocity.x, 0, _rb.angularVelocity.x);
             _rb.AddForce(transform.up * _jumping._jumpForce);
             SetCanJump(false);
