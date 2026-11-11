@@ -87,6 +87,7 @@ public class PlayerController : MonoBehaviour
         public AudioSource _audioSource;
         public AudioClip _jumpClip;
         public AudioClip _biteClip;
+        public AudioClip _collectClip;
     }
     [SerializeField] private PlayerAudio _audio;
     #endregion
@@ -482,6 +483,12 @@ public class PlayerController : MonoBehaviour
     public void PauseMovement()
     {
         _moveInput = Vector2.zero;
+    }
+
+    public void CollectCheese()
+    {
+        _audio._audioSource.clip = _audio._collectClip;
+        _audio._audioSource.Play();
     }
 
     void OnDrawGizmosSelected()

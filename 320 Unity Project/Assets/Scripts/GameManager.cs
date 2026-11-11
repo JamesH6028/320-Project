@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     public void IncrementCheeseCount()
     {
+        controllerScript.CollectCheese();
         cheeseCount++;
         string cheeseCountText = "";
         if (cheeseCount < 10) cheeseCountText = "0" + cheeseCount.ToString();
@@ -37,7 +38,6 @@ public class GameManager : MonoBehaviour
     public void SetPlayerController(PlayerController script)
     {
         controllerScript = script;
-        Debug.Log("player script added!");
     }
 
     public void PauseGame()
