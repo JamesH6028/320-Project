@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.ExceptionServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -40,20 +41,23 @@ public class PlayerController : MonoBehaviour
         public Vector3 _groundingCheckDistance;
         public Vector3 _canJumpCheckDistance;
         public float _jumpForce;
+        public float _coyoteTimeLength;
         public PhysicsMaterial _zeroFrictionMaterial;
     }
     [SerializeField] private Jumping _jumping;
 
     private bool _grounded = true;
     private bool _canJump = false;
+    private bool _isJumping = false;
+    private bool _coyoteTimeStarted = false;
     #endregion
 
     #region Biting
     [Serializable]
     private class Biting
     {
-        public float _biteRayHeight;
-        public float _biteRayLength;
+        public float _overlapBoxZCenter;
+        public Vector3 _overlapBoxHalfWidth;
         public Vector3 _hingeAnchor;
         public GameObject _biteInfoObject;
         public float _autoBreakWaitTime;
@@ -191,7 +195,7 @@ public class PlayerController : MonoBehaviour
         Vector3 deltaPos = transform.forward * Vector2.ClampMagnitude(_moveInput, 1).magnitude * _movement._moveSpeed * _moveMultiplier * Time.fixedDeltaTime;
         // TODO: Finish collision testing
         RaycastHit rayInfo;
-        if(Physics.Raycast(transform.position, deltaPos, out rayInfo, deltaPos.magnitude))
+        if (Physics.Raycast(transform.position, deltaPos, out rayInfo, deltaPos.magnitude))
         {
             deltaPos = rayInfo.point - transform.position - transform.forward * _biting._hingeAnchor.z;
         }
@@ -304,19 +308,23 @@ public class PlayerController : MonoBehaviour
 
     private bool CanBiteRayCast(out RaycastHit rayInfo)
     {
-        return Physics.Raycast(
-            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
+        return Physics.BoxCast(
+            _playerCollider.transform.position,
+            _biting._overlapBoxHalfWidth,
             _playerCollider.transform.forward,
             out rayInfo,
-            _biting._biteRayLength);
+            _playerCollider.transform.rotation,
+            _biting._overlapBoxZCenter);
     }
 
     private bool CanBiteRayCast()
     {
-        return Physics.Raycast(
-            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
+        return Physics.BoxCast(
+            _playerCollider.transform.position,
+            _biting._overlapBoxHalfWidth,
             _playerCollider.transform.forward,
-            _biting._biteRayLength);
+            _playerCollider.transform.rotation,
+            _biting._overlapBoxZCenter);
     }
     #endregion
 
@@ -332,6 +340,11 @@ public class PlayerController : MonoBehaviour
         if (grounded)
         {
             _playerCollider.material = null;
+            _isJumping = false;
+        }
+        else
+        {
+            StartCoroutine(WaitCoyoteTime());
         }
     }
 
@@ -372,14 +385,25 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && _canJump)
+        if (context.performed && (_canJump || (_coyoteTimeStarted && !_isJumping)))
         {
+            _isJumping = true;
             _playerCollider.material = _jumping._zeroFrictionMaterial;
             _rb.linearVelocity = new Vector3(_rb.angularVelocity.x, 0, _rb.angularVelocity.x);
             _rb.AddForce(transform.up * _jumping._jumpForce);
             SetCanJump(false);
             _audio._audioSource.clip = _audio._jumpClip;
             _audio._audioSource.Play();
+        }
+    }
+
+    private IEnumerator WaitCoyoteTime()
+    {
+        if (!_coyoteTimeStarted)
+        {
+            _coyoteTimeStarted = true;
+            yield return new WaitForSeconds(_jumping._coyoteTimeLength);
+            _coyoteTimeStarted = false;
         }
     }
 
@@ -391,6 +415,7 @@ public class PlayerController : MonoBehaviour
             RaycastHit rayInfo;
             if (CanBiteRayCast(out rayInfo))
             {
+                Debug.Log(rayInfo.collider.gameObject);
                 Rigidbody rbOther = rayInfo.collider.gameObject.GetComponent<Rigidbody>();
                 _hj = gameObject.AddComponent<HingeJoint>();
                 _hj.anchor = _biting._hingeAnchor;
@@ -533,10 +558,11 @@ public class PlayerController : MonoBehaviour
 
         // bite
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(
-            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight,
-            _playerCollider.transform.position + _playerCollider.transform.up * _biting._biteRayHeight + _playerCollider.transform.forward * _biting._biteRayLength
-            );
+        Gizmos.matrix = Matrix4x4.Translate(_playerCollider.transform.position) * Matrix4x4.Rotate(_playerCollider.transform.rotation);
+        Gizmos.DrawWireCube(
+            new Vector3(0, 0, _biting._overlapBoxZCenter),
+            _biting._overlapBoxHalfWidth * 2);
+        Gizmos.matrix = Matrix4x4.identity;
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(
             transform.TransformPoint(_biting._hingeAnchor),
